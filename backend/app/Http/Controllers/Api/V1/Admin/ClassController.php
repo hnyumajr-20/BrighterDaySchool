@@ -60,4 +60,11 @@ class ClassController extends Controller
 
         return response()->json($class);
     }
+
+    public function destroy(SchoolClass $class): JsonResponse
+    {
+        $class->delete();
+
+        return response()->json(null, 204);
+    }
 }

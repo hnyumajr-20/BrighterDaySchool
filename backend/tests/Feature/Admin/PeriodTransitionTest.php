@@ -151,4 +151,69 @@ class PeriodTransitionTest extends TestCase
         $this->assertEquals('closed', $semester1->fresh()->status);
         $this->assertEquals('active', $year->fresh()->status);
     }
+
+    public function test_semester_opens_and_closes_by_its_own_dates_with_no_periods_involved(): void
+    {
+        $year = AcademicYear::create([
+            'name' => '2026/2027', 'start_date' => '2026-09-01', 'end_date' => '2027-07-31', 'status' => 'active',
+        ]);
+        $semester = Semester::create([
+            'academic_year_id' => $year->id, 'name' => '1st Semester', 'sequence' => 1,
+            'start_date' => '2026-09-10', 'end_date' => '2026-09-20', 'status' => 'upcoming',
+        ]);
+
+        Carbon::setTestNow('2026-09-05');
+        $this->service()->run();
+        $this->assertEquals('upcoming', $semester->fresh()->status, 'Before its start date it stays upcoming.');
+
+        Carbon::setTestNow('2026-09-10');
+        $this->service()->run();
+        $this->assertEquals('active', $semester->fresh()->status, 'It opens by itself on its start date.');
+
+        Carbon::setTestNow('2026-09-20');
+        $this->service()->run();
+        $this->assertEquals('active', $semester->fresh()->status, 'Still active on its own end date.');
+
+        Carbon::setTestNow('2026-09-21');
+        $this->service()->run();
+        $this->assertEquals('closed', $semester->fresh()->status, 'It closes by itself the day after its end date.');
+    }
+
+    public function test_academic_year_opens_and_closes_by_its_own_dates(): void
+    {
+        $year = AcademicYear::create([
+            'name' => '2026/2027', 'start_date' => '2026-09-10', 'end_date' => '2027-07-20', 'status' => 'upcoming',
+        ]);
+
+        Carbon::setTestNow('2026-09-09');
+        $this->service()->run();
+        $this->assertEquals('upcoming', $year->fresh()->status);
+
+        Carbon::setTestNow('2026-09-10');
+        $this->service()->run();
+        $this->assertEquals('active', $year->fresh()->status);
+
+        Carbon::setTestNow('2027-07-21');
+        $this->service()->run();
+        $this->assertEquals('closed', $year->fresh()->status);
+    }
+
+    public function test_manual_status_edit_still_works_and_is_not_overridden_by_the_scheduler(): void
+    {
+        $year = AcademicYear::create([
+            'name' => '2026/2027', 'start_date' => '2026-09-01', 'end_date' => '2027-07-31', 'status' => 'active',
+        ]);
+        // Its own dates say this semester shouldn't open until 2027-01-05,
+        // but an admin can still open it early by hand — the scheduler
+        // must not silently revert that override.
+        $semester = Semester::create([
+            'academic_year_id' => $year->id, 'name' => '2nd Semester', 'sequence' => 2,
+            'start_date' => '2027-01-05', 'end_date' => '2027-06-30', 'status' => 'active',
+        ]);
+
+        Carbon::setTestNow('2026-10-01');
+        $this->service()->run();
+
+        $this->assertEquals('active', $semester->fresh()->status, 'Manual open stays open even before the start date.');
+    }
 }

@@ -86,6 +86,31 @@ class ClassTest extends TestCase
             ->assertJsonPath('fee_amount_cents', 5000000);
     }
 
+    public function test_admin_can_delete_a_class(): void
+    {
+        $year = AcademicYear::create([
+            'name' => '2026/2027',
+            'start_date' => '2026-09-01',
+            'end_date' => '2027-07-31',
+            'status' => 'active',
+        ]);
+        $token = $this->adminToken();
+
+        $created = $this->withHeader('Authorization', "Bearer {$token}")
+            ->postJson('/api/v1/classes', [
+                'name' => 'JSS4',
+                'arm' => 'A',
+                'fee_amount_cents' => 4200000,
+                'academic_year_id' => $year->id,
+            ])->json();
+
+        $this->withHeader('Authorization', "Bearer {$token}")
+            ->deleteJson("/api/v1/classes/{$created['id']}")
+            ->assertNoContent();
+
+        $this->assertDatabaseMissing('classes', ['id' => $created['id']]);
+    }
+
     public function test_non_admin_cannot_create_a_class(): void
     {
         $year = AcademicYear::create([

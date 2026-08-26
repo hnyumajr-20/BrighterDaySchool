@@ -35,3 +35,4 @@ Thumbs.db
 
 # Claude Code local settings (machine-specific permission grants)
 .claude/settings.local.json
+.claude/scheduled_tasks.lock

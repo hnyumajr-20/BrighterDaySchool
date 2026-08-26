@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('periods:transition')->dailyAt('00:00');
+Schedule::command('attendance:transition')->everyFiveMinutes();
+Schedule::command('installments:charge')->dailyAt('00:10');

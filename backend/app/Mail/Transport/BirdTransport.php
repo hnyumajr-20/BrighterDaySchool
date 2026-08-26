@@ -3,10 +3,12 @@
 namespace App\Mail\Transport;
 
 use MessageBird\Bird;
+use MessageBird\Wire\Model\EmailAttachment;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\AbstractTransport;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\MessageConverter;
+use Symfony\Component\Mime\Part\DataPart;
 
 class BirdTransport extends AbstractTransport
 {
@@ -24,12 +26,21 @@ class BirdTransport extends AbstractTransport
 
         $html = $email->getHtmlBody() ?? nl2br(e((string) $email->getTextBody()));
 
+        $attachments = array_map(
+            fn (DataPart $part) => (new EmailAttachment())
+                ->setFilename($part->getFilename() ?? 'attachment')
+                ->setContentType($part->getContentType())
+                ->setContent(base64_encode($part->getBody())),
+            $email->getAttachments(),
+        );
+
         $this->bird->email->send(
             from: $from ? $this->formatAddress($from[0]) : null,
             to: array_map(fn (Address $address) => $address->getAddress(), $to),
             subject: (string) $email->getSubject(),
             html: $html,
             text: $email->getTextBody(),
+            attachments: $attachments ?: null,
         );
     }
 

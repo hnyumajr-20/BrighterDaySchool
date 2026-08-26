@@ -25,4 +25,23 @@ class SubjectController extends Controller
 
         return response()->json($subject, 201);
     }
+
+    public function update(Request $request, Subject $subject): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => ['sometimes', 'string', 'max:60'],
+            'code' => ['sometimes', 'nullable', 'string', 'max:10', 'unique:subjects,code,'.$subject->id],
+        ]);
+
+        $subject->update($data);
+
+        return response()->json($subject);
+    }
+
+    public function destroy(Subject $subject): JsonResponse
+    {
+        $subject->delete();
+
+        return response()->json(null, 204);
+    }
 }

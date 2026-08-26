@@ -27,7 +27,7 @@ class RbacTest extends TestCase
         $token = $accountant->createToken('api')->plainTextToken;
 
         $response = $this->withHeader('Authorization', "Bearer {$token}")
-            ->getJson('/api/v1/fee-transactions');
+            ->getJson('/api/v1/fee-transactions/students');
 
         $response->assertOk();
     }

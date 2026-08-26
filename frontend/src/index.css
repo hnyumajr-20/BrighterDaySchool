@@ -1,19 +1,33 @@
-:root {
-  --color-bg: #f7f7f8;
-  --color-surface: #ffffff;
-  --color-border: #d9dade;
-  --color-text: #1c1d21;
-  --color-text-muted: #5a5c63;
-  --color-accent: #2557a7;
-  --color-error: #b3261e;
-  --color-success: #1e7a34;
+@import 'tailwindcss';
 
-  color-scheme: light;
-  font-size: 16px;
-}
+/* Tailwind's `dark:` variant activates from our own ThemeContext toggle
+   (which sets data-theme on <html>), not prefers-color-scheme or a `.dark`
+   class. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
-* {
-  box-sizing: border-box;
+@theme {
+  --font-serif: Georgia, 'Times New Roman', Times, serif;
+
+  /* Brand palette, from the school crest (School logo.png): charcoal shield,
+     gold lettering, blue water. Used in place of Tailwind's default indigo. */
+  --color-primary-50: #eaf1fa;
+  --color-primary-100: #cfe0f2;
+  --color-primary-200: #a3c4e6;
+  --color-primary-300: #6fa2d8;
+  --color-primary-400: #3f7fc4;
+  --color-primary-500: #2568b2;
+  --color-primary-600: #1d5fae;
+  --color-primary-700: #184c8c;
+  --color-primary-800: #163f70;
+  --color-primary-900: #14355c;
+
+  --color-brand-yellow-50: #fdf6e0;
+  --color-brand-yellow-400: #f0b400;
+  --color-brand-yellow-500: #dba400;
+  --color-brand-yellow-600: #caa000;
+
+  --color-chrome: #232429;
+  --color-chrome-light: #38393e;
 }
 
 html,
@@ -25,8 +39,6 @@ body,
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -34,159 +46,4 @@ body {
     animation: none !important;
     transition: none !important;
   }
-}
-
-/* ---- Buttons ---- */
-.btn {
-  font-size: 1rem;
-  font-family: inherit;
-  padding: 0.6rem 1.2rem;
-  border-radius: 4px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-.btn-primary {
-  background: var(--color-accent);
-  color: #fff;
-}
-
-.btn-secondary {
-  background: transparent;
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.btn-tertiary {
-  background: transparent;
-  color: var(--color-text-muted);
-  text-decoration: underline;
-  padding: 0.4rem 0;
-}
-
-/* ---- Auth forms ---- */
-.auth-page {
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-}
-
-.auth-form {
-  width: 100%;
-  max-width: 360px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.auth-form h1 {
-  font-size: 1.4rem;
-  margin: 0 0 0.25rem;
-}
-
-.auth-subtitle {
-  margin: 0 0 1rem;
-  color: var(--color-text-muted);
-}
-
-.auth-form label {
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-}
-
-.auth-form input {
-  font-size: 1rem;
-  padding: 0.5rem 0.6rem;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-}
-
-.auth-form .btn {
-  margin-top: 1rem;
-}
-
-.auth-link {
-  color: var(--color-accent);
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  text-align: center;
-}
-
-.form-error {
-  color: var(--color-error);
-  font-size: 0.9rem;
-  margin: 0.25rem 0 0;
-}
-
-.form-success {
-  color: var(--color-success);
-  font-size: 0.9rem;
-  margin: 0.25rem 0 0;
-}
-
-/* ---- Authenticated shell (Section 6.2) ---- */
-.app-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.5rem;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.topbar-title {
-  font-weight: 600;
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.app-body {
-  display: flex;
-  flex: 1;
-  min-height: 0;
-}
-
-.sidebar {
-  width: 200px;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
-  padding: 1rem 0;
-}
-
-.sidebar ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 0.6rem 1.5rem;
-  color: var(--color-text);
-}
-
-.content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
 }

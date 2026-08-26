@@ -97,6 +97,11 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // Without this, timestamptz columns round-trip through the
+            // Postgres server's own local timezone (found to default to
+            // Africa/Johannesburg, UTC+2) instead of app.timezone (UTC),
+            // silently shifting every stored instant by 2 hours.
+            'timezone' => 'UTC',
         ],
 
         'sqlsrv' => [
